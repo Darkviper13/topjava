@@ -28,7 +28,7 @@ public class UserMeal {
         return calories;
     }
 
-    // Добваил для использования в Stream
+    // Added to use in Stream
     public LocalDate getDate() {
         return dateTime.toLocalDate();
     }
