@@ -10,30 +10,12 @@
 
 <script>
     function disp(id) {
-        document.getElementById('div1' + id).style.display == "none" ?
-            document.getElementById('div1' + id).style.display = "block" :
-            document.getElementById('div1' + id).style.display = "none";
-        document.getElementById('div2' + id).style.display == "none" ?
-            document.getElementById('div2' + id).style.display = "block" :
-            document.getElementById('div2' + id).style.display = "none";
-        document.getElementById('div3' + id).style.display == "none" ?
-            document.getElementById('div3' + id).style.display = "block" :
-            document.getElementById('div3' + id).style.display = "none";
-        document.getElementById('f1' + id).style.display == "none" ?
-            document.getElementById('f1' + id).style.display = "block" :
-            document.getElementById('f1' + id).style.display = "none";
-        document.getElementById('f2' + id).style.display == "none" ?
-            document.getElementById('f2' + id).style.display = "block" :
-            document.getElementById('f2' + id).style.display = "none";
-        document.getElementById('f3' + id).style.display == "none" ?
-            document.getElementById('f3' + id).style.display = "block" :
-            document.getElementById('f3' + id).style.display = "none";
-        document.getElementById('editButton' + id).style.display == "none" ?
-            document.getElementById('editButton' + id).style.display = "block" :
-            document.getElementById('editButton' + id).style.display = "none";
-        document.getElementById('submitButton' + id).style.display == "none" ?
-            document.getElementById('submitButton' + id).style.display = "block" :
-            document.getElementById('submitButton' + id).style.display = "none";
+        var htmlElements = document.getElementsByName('togglefield' + id);
+        htmlElements.forEach(function (value) {
+            value.style.display == "none" ?
+                value.style.display = "block" :
+                value.style.display = "none"
+        })
     }
 </script>
 
@@ -53,6 +35,7 @@
         <div class="table-title">
             <div class="row">
                 <div class="col-sm-6">
+                    <a style="font-size: 20px; color: #fff" href="index.html"><--Main</a>
                     <h2>Meals</h2>
                 </div>
             </div>
@@ -82,11 +65,11 @@
                     <c:set var="id" value="${meal.id}"/>
                     <form method="post" action="meals?action=edit&value=${meal.id}">
                         <td>
-                            <div id="div1${id}">
-                                <c:out value="${formatter.format(meal.dateTime)}"/>
+                            <div name="togglefield${id}">
+                                    ${formatter.format(meal.dateTime)}
                             </div>
 
-                            <fieldset id="f1${id}" style="display: none">
+                            <fieldset style="display: none" name="togglefield${id}">
                                 <label for="datetime">Local date time
                                     <input style="width: 200px" class="input-field" type="datetime-local" id="datetime"
                                            name="datetime" value="${meal.dateTime}">
@@ -94,10 +77,10 @@
                             </fieldset>
                         </td>
                         <td>
-                            <div id="div2${id}">
-                                <c:out value="${meal.description}"/>
+                            <div name="togglefield${id}">
+                                    ${meal.description}
                             </div>
-                            <fieldset id="f2${id}" style="display: none">
+                            <fieldset style="display: none" name="togglefield${id}">
                                 <label for="description">Description
                                     <input style="width: 150px" class="text-input" type="text" id="description"
                                            name="description" value="${meal.description}">
@@ -105,10 +88,10 @@
                             </fieldset>
                         </td>
                         <td>
-                            <div id="div3${id}">
-                                <c:out value="${meal.calories}"/>
+                            <div name="togglefield${id}">
+                                    ${meal.calories}
                             </div>
-                            <fieldset id="f3${id}" style="display: none">
+                            <fieldset style="display: none" name="togglefield${id}">
                                 <label for="calories">Calories
                                     <input style="width: 170px" class="text-input" type="number" id="calories"
                                            name="calories" value="${meal.calories}">
@@ -116,8 +99,9 @@
                             </fieldset>
                         </td>
                         <td>
-                            <input id="editButton${id}" type="button" title="Edit" onclick="disp(${id})" value="Edit">
-                            <fieldset id="submitButton${id}" style="display: none">
+                            <input type="button" title="Edit" onclick="disp(${id})" value="Edit"
+                                   name="togglefield${id}">
+                            <fieldset style="display: none" name="togglefield${id}">
                                 <input type="submit" title="Edit" onclick="disp(${id})" value="Edit">
                             </fieldset>
                     </form>

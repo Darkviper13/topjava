@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,43 +14,46 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MealDaoInMemory implements CrudDao<Meal> {
 
     //For using in multithreading application, take ConcurrentHashMap.
-    private final ConcurrentHashMap<Integer, Meal> dataBase = new ConcurrentHashMap<>();
+    private final Map<Integer, Meal> dataBase = new ConcurrentHashMap<>();
 
     //We use AtomicInteger for generate primary keys for our data base.
-    private static AtomicInteger id = new AtomicInteger(0);
-
-    private void addMeal(Meal meal) {
-        if (meal.getId() == null) {
-            meal.setId(id.incrementAndGet());
-        }
-        dataBase.put(meal.getId(), meal);
-    }
+    private AtomicInteger counter = new AtomicInteger(0);
 
     //Add data
     {
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 29, 10, 0), "Завтрак", 500));
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 29, 13, 0), "Обед", 1000));
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 29, 20, 0), "Ужин", 500));
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 1000));
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 500));
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 510));
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1100));
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
-        addMeal(new Meal(id.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
-    }
-
-    public MealDaoInMemory() {
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 29, 10, 0), "Завтрак", 500));
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 29, 13, 0), "Обед", 1000));
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 29, 20, 0), "Ужин", 500));
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 1000));
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 500));
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 510));
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1100));
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500));
+        save(new Meal(counter.incrementAndGet(), LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510));
     }
 
     @Override
-    public void save(Meal model) {
-        addMeal(model);
+    public Meal get(Integer id) {
+        return dataBase.get(id);
     }
 
     @Override
-    public void update(Integer id, Meal model) {
-        model.setId(id);
-        dataBase.computeIfPresent(id, (key, value) -> value = model);
+    public Meal save(Meal model) {
+        if (model.getId() == null) {
+            model.setId(counter.incrementAndGet());
+        }
+        dataBase.put(model.getId(), model);
+        return model;
+    }
+
+    @Override
+    public Meal update(Integer id, Meal model) {
+        if (id > 0 && id <= counter.get()) {
+            model.setId(id);
+            dataBase.computeIfPresent(id, (key, value) -> model);
+            return model;
+        }
+        return null;
     }
 
     @Override

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class MealTo {
 
-    private int id;     //Needed for using in in-memory db
+    private Integer id;     //Needed for using in in-memory db
 
     private final LocalDateTime dateTime;
 
@@ -14,19 +14,17 @@ public class MealTo {
 
     private final boolean excess;
 
-    public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess) {
+
+
+    public MealTo(Integer id, LocalDateTime dateTime, String description, int calories, boolean excess) {
+        this.id = id;
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
         this.excess = excess;
     }
 
-    public MealTo(int id, LocalDateTime dateTime, String description, int calories, boolean excess) {
-        this(dateTime, description, calories, excess);
-        this.id = id;
-    }
-
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

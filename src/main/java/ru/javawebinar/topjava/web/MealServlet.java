@@ -31,23 +31,18 @@ public class MealServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            if (req.getParameter("action").equals("delete")) {
-                Integer id = Integer.parseInt(req.getParameter("value"));
-                mealDaoInMemory.delete(id);
-                log.debug("redirect to meals");
-                resp.sendRedirect("meals");
-                return;
-            }
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        if ("delete".equals(req.getParameter("action"))) {
+            Integer id = Integer.parseInt(req.getParameter("value"));
+            mealDaoInMemory.delete(id);
+            log.debug("redirect to meals");
+            resp.sendRedirect("meals");
+        } else {
+            List<MealTo> mealToList = MealsUtil.createListOfMealTo(mealDaoInMemory.findAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+            req.setAttribute("mealsFromDataBase", mealToList);
+            req.setAttribute("formatter", formatter);
+            log.debug("forward to meals");
+            req.getServletContext().getRequestDispatcher("/meals.jsp").forward(req, resp);
         }
-
-        List<MealTo> mealToList = MealsUtil.createListOfMealTo(mealDaoInMemory.findAll());
-        req.setAttribute("mealsFromDataBase", mealToList);
-        req.setAttribute("formatter", formatter);
-        log.debug("forward to meals");
-        req.getServletContext().getRequestDispatcher("/meals.jsp").forward(req, resp);
     }
 
     @Override
@@ -55,39 +50,45 @@ public class MealServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String requestParam = req.getParameter("action");
         log.debug("Request passed first parameter: " + requestParam);
+        Meal meal = parseRequest(req);
         switch (requestParam) {
-
             case "edit":
                 try {
                     Integer id = Integer.parseInt(req.getParameter("value"));
-                    LocalDateTime dateTime = LocalDateTime.parse(req.getParameter("datetime"));
-                    String description = req.getParameter("description");
-                    int calories = Integer.parseInt(req.getParameter("calories"));
-                    mealDaoInMemory.update(id, new Meal(dateTime, description, calories));
+                    if (meal != null) {
+                        meal.setId(id);
+                        mealDaoInMemory.update(id, meal);
+                    }
                 } catch (Exception e) {
                     log.error(e.getMessage());
                 }
-                log.debug("redirect to meals");
-                resp.sendRedirect("meals");
                 break;
 
             case "save":
                 try {
-                    LocalDateTime dateTime = LocalDateTime.parse(req.getParameter("datetime"));
-                    String description = req.getParameter("description");
-                    int calories = Integer.parseInt(req.getParameter("calories"));
-                    mealDaoInMemory.save(new Meal(dateTime, description, calories));
+                    mealDaoInMemory.save(meal);
                 } catch (Exception e) {
                     log.error(e.getMessage());
                 }
-                log.debug("redirect to meals");
-                resp.sendRedirect("meals");
                 break;
 
             default:
-                log.debug("no parameters, redirect to meals");
-                resp.sendRedirect("meals");
+                log.debug("no parameters");
                 break;
+        }
+        log.debug("redirect to meals");
+        resp.sendRedirect("meals");
+    }
+
+    private Meal parseRequest(HttpServletRequest req) {
+        try {
+            LocalDateTime dateTime = LocalDateTime.parse(req.getParameter("datetime"));
+            String description = req.getParameter("description");
+            int calories = Integer.parseInt(req.getParameter("calories"));
+            return new Meal(dateTime, description, calories);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
         }
     }
 }
