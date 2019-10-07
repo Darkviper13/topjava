@@ -21,50 +21,7 @@ body {
     margin: 5px 0 0;
     font-size: 24px;
 }
-.search-box {
-    position: relative;
-    float: right;
-}
-.search-box .input-group {
-    min-width: 200px;
-    position: absolute;
-    right: 0;
-}
-.search-box .input-group-addon, .search-box input {
-    border-color: #ddd;
-    border-radius: 0;
-}
-.search-box input {
-    background: #f4fcfd;
-    border: none;
-    outline: none;
-    -webkit-appearance: none;
-    width: 280px;
-    vertical-align: middle;
-    border-radius: 2px !important;
-}
 
-.search-box input:focus {
-    background: #fff;
-}
-.search-box input::placeholder {
-    font-style: italic;
-}
-.search-box .input-group-addon {
-    min-width: 35px;
-    border: none;
-    background: transparent;
-    position: absolute;
-    right: 0;
-    z-index: 9;
-    padding: 6px 0;
-}
-.search-box i {
-    color: #000000;
-    width: 20px;
-    height: 20px;
-    border: none;
-}
 table.table {
     table-layout: fixed;
     margin-top: 15px;

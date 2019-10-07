@@ -9,12 +9,31 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <script>
-    function disp(form) {
-        if (form.style.display == "none") {
-            form.style.display = "block";
-        } else {
-            form.style.display = "none";
-        }
+    function disp(id) {
+        document.getElementById('div1' + id).style.display == "none" ?
+            document.getElementById('div1' + id).style.display = "block" :
+            document.getElementById('div1' + id).style.display = "none";
+        document.getElementById('div2' + id).style.display == "none" ?
+            document.getElementById('div2' + id).style.display = "block" :
+            document.getElementById('div2' + id).style.display = "none";
+        document.getElementById('div3' + id).style.display == "none" ?
+            document.getElementById('div3' + id).style.display = "block" :
+            document.getElementById('div3' + id).style.display = "none";
+        document.getElementById('f1' + id).style.display == "none" ?
+            document.getElementById('f1' + id).style.display = "block" :
+            document.getElementById('f1' + id).style.display = "none";
+        document.getElementById('f2' + id).style.display == "none" ?
+            document.getElementById('f2' + id).style.display = "block" :
+            document.getElementById('f2' + id).style.display = "none";
+        document.getElementById('f3' + id).style.display == "none" ?
+            document.getElementById('f3' + id).style.display = "block" :
+            document.getElementById('f3' + id).style.display = "none";
+        document.getElementById('editButton' + id).style.display == "none" ?
+            document.getElementById('editButton' + id).style.display = "block" :
+            document.getElementById('editButton' + id).style.display = "none";
+        document.getElementById('submitButton' + id).style.display == "none" ?
+            document.getElementById('submitButton' + id).style.display = "block" :
+            document.getElementById('submitButton' + id).style.display = "none";
     }
 </script>
 
@@ -36,20 +55,6 @@
                 <div class="col-sm-6">
                     <h2>Meals</h2>
                 </div>
-                <div class="col-sm-6">
-                    <div class="search-box">
-                        <div class="input-group">
-                            <form id="search" name="search" method="post" action="meals?action=search">
-                                <label for="date">
-                                    <input type="date" id="date" name="date" class="form-control"
-                                           placeholder="Search by date">
-                                    <button class="input-group-addon" type="submit" form="search"><i
-                                            class="material-icons">&#xE8B6;</i></button>
-                                </label>
-                            </form>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <table class="table table-striped">
@@ -57,8 +62,7 @@
             <tr>
                 <th style="width: 22%;">Local date time</th>
                 <th style="width: 22%;">Description</th>
-                <th>Calories</th>
-                <th>Excess</th>
+                <th style="width: 22%;">Calories</th>
             </tr>
             </thead>
             <tbody>
@@ -66,7 +70,8 @@
                 <form method="post" action="meals?action=save">
                     <div class="input-group">
                         <input style="width: 200px" class="form-control" type="datetime-local" name="datetime">
-                        <input style="width: 150px" class="form-control" type="text" name="description" value="Description">
+                        <input style="width: 150px" class="form-control" type="text" name="description"
+                               value="Description">
                         <input style="width: 100px" class="form-control" type="text" name="calories" value="Calories">
                         <input style="width: 125px;height: 34px" type="submit" value="Add new meal">
                     </div>
@@ -74,13 +79,14 @@
             </tr>
             <c:forEach items="${mealsFromDataBase}" var="meal">
                 <tr style="background-color: ${meal.excess ? 'lightcoral' : 'lightgreen'}">
+                    <c:set var="id" value="${meal.id}"/>
                     <form method="post" action="meals?action=edit&value=${meal.id}">
                         <td>
-                            <div id="div1${meal.id}">
+                            <div id="div1${id}">
                                 <c:out value="${formatter.format(meal.dateTime)}"/>
                             </div>
 
-                            <fieldset id="f1${meal.id}" style="display: none">
+                            <fieldset id="f1${id}" style="display: none">
                                 <label for="datetime">Local date time
                                     <input style="width: 200px" class="input-field" type="datetime-local" id="datetime"
                                            name="datetime" value="${meal.dateTime}">
@@ -88,10 +94,10 @@
                             </fieldset>
                         </td>
                         <td>
-                            <div id="div2${meal.id}">
+                            <div id="div2${id}">
                                 <c:out value="${meal.description}"/>
                             </div>
-                            <fieldset id="f2${meal.id}" style="display: none">
+                            <fieldset id="f2${id}" style="display: none">
                                 <label for="description">Description
                                     <input style="width: 150px" class="text-input" type="text" id="description"
                                            name="description" value="${meal.description}">
@@ -99,47 +105,25 @@
                             </fieldset>
                         </td>
                         <td>
-                            <div id="div3${meal.id}">
+                            <div id="div3${id}">
                                 <c:out value="${meal.calories}"/>
                             </div>
-                            <fieldset id="f3${meal.id}" style="display: none">
+                            <fieldset id="f3${id}" style="display: none">
                                 <label for="calories">Calories
-                                    <input style="width: 100px" class="text-input" type="number" id="calories"
+                                    <input style="width: 170px" class="text-input" type="number" id="calories"
                                            name="calories" value="${meal.calories}">
                                 </label>
                             </fieldset>
                         </td>
                         <td>
-                            <c:out value="${meal.excess}"/>
-                        </td>
-                        <td>
-                            <input id="editButton${meal.id}" type="button" title="Edit" onclick="
-                                    disp(document.getElementById('div1${meal.id}'));
-                                    disp(document.getElementById('div2${meal.id}'));
-                                    disp(document.getElementById('div3${meal.id}'));
-                                    disp(document.getElementById('f1${meal.id}'));
-                                    disp(document.getElementById('f2${meal.id}'));
-                                    disp(document.getElementById('f3${meal.id}'));
-                                    disp(document.getElementById('editButton${meal.id}'));
-                                    disp(document.getElementById('submitButton${meal.id}'))" value="Edit">
-                            <fieldset id="submitButton${meal.id}" style="display: none">
-                                <input type="submit" title="Edit" onclick="
-                                        disp(document.getElementById('div1${meal.id}'));
-                                        disp(document.getElementById('div2${meal.id}'));
-                                        disp(document.getElementById('div3${meal.id}'));
-                                        disp(document.getElementById('f1${meal.id}'));
-                                        disp(document.getElementById('f2${meal.id}'));
-                                        disp(document.getElementById('f3${meal.id}'));
-                                        disp(document.getElementById('editButton${meal.id}'));
-                                        disp(document.getElementById('submitButton${meal.id}'));"
-                                       value="Edit">
+                            <input id="editButton${id}" type="button" title="Edit" onclick="disp(${id})" value="Edit">
+                            <fieldset id="submitButton${id}" style="display: none">
+                                <input type="submit" title="Edit" onclick="disp(${id})" value="Edit">
                             </fieldset>
                     </form>
                     </td>
                     <td>
-                        <form method="post" action="meals?action=delete&value=${meal.id}">
-                            <input type="submit" value="Delete">
-                        </form>
+                        <button onclick="location.href='meals?action=delete&value=${id}'">Delete</button>
                     </td>
                 </tr>
             </c:forEach>

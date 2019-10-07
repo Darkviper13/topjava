@@ -1,8 +1,8 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
-import ru.javawebinar.topjava.dao.MealDao;
-import ru.javawebinar.topjava.dao.MealDaoInMemoryImpl;
+import ru.javawebinar.topjava.dao.CrudDao;
+import ru.javawebinar.topjava.dao.MealDaoInMemory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealTo;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -22,19 +21,28 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-    private MealDao mealDaoInMemory;
-
-    public MealServlet() {
-    }
+    private CrudDao<Meal> mealDaoInMemory;
 
     @Override
     public void init() throws ServletException {
         log.info("Initialization MealServlet");
-        mealDaoInMemory = new MealDaoInMemoryImpl();
+        mealDaoInMemory = new MealDaoInMemory();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            if (req.getParameter("action").equals("delete")) {
+                Integer id = Integer.parseInt(req.getParameter("value"));
+                mealDaoInMemory.delete(id);
+                log.debug("redirect to meals");
+                resp.sendRedirect("meals");
+                return;
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+
         List<MealTo> mealToList = MealsUtil.createListOfMealTo(mealDaoInMemory.findAll());
         req.setAttribute("mealsFromDataBase", mealToList);
         req.setAttribute("formatter", formatter);
@@ -76,39 +84,8 @@ public class MealServlet extends HttpServlet {
                 resp.sendRedirect("meals");
                 break;
 
-            case "delete":
-                try {
-                    Integer id = Integer.parseInt(req.getParameter("value"));
-                    mealDaoInMemory.delete(id);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-                log.debug("redirect to meals");
-                resp.sendRedirect("meals");
-                break;
-
-            case "search":
-                LocalDate localDate;
-                try {
-                    localDate = LocalDate.parse(req.getParameter("date"));
-                    if (localDate != null) {
-                        List<Meal> mealList = mealDaoInMemory.findByLocalDate(localDate);
-                        List<MealTo> mealToList = MealsUtil.createListOfMealTo(mealList);
-                        if (mealToList.size() > 0) {
-                            req.setAttribute("mealsFromDataBase", mealToList);
-                        }
-                        req.setAttribute("formatter", formatter);
-                        log.debug("forward to meals");
-                        req.getServletContext().getRequestDispatcher("/meals.jsp").forward(req, resp);
-                    } else {
-                        doGet(req, resp);
-                    }
-                    break;
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
             default:
-                log.debug("redirect to meals");
+                log.debug("no parameters, redirect to meals");
                 resp.sendRedirect("meals");
                 break;
         }

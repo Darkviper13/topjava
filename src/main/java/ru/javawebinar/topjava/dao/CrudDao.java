@@ -4,7 +4,6 @@ import java.util.List;
 
 //Base CRUD interface
 public interface CrudDao<T> {
-    T find(Integer id);
 
     void save(T model);
 
