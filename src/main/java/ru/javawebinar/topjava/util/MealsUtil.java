@@ -26,13 +26,4 @@ public class MealsUtil {
     private static MealTo createTo(Meal meal, boolean excess) {
         return new MealTo(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), excess);
     }
-
-    public static List<MealTo> createListOfMealTo(List<Meal> meals, int calories) {
-        Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
-                .collect(Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories)));
-
-        return meals.stream()
-                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > calories))
-                .collect(Collectors.toList());
-    }
 }

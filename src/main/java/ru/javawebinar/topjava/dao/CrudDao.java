@@ -8,7 +8,7 @@ public interface CrudDao<T> {
 
     T save(T model);
 
-    T update(Integer id, T model);
+    T update(T model);
 
     void delete(Integer id);
 

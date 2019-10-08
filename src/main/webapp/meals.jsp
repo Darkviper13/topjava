@@ -70,7 +70,7 @@
                             </div>
 
                             <fieldset style="display: none" name="togglefield${id}">
-                                <label for="datetime">Local date time
+                                <label for="datetime">
                                     <input style="width: 200px" class="input-field" type="datetime-local" id="datetime"
                                            name="datetime" value="${meal.dateTime}">
                                 </label>
@@ -81,8 +81,8 @@
                                     ${meal.description}
                             </div>
                             <fieldset style="display: none" name="togglefield${id}">
-                                <label for="description">Description
-                                    <input style="width: 150px" class="text-input" type="text" id="description"
+                                <label for="description">
+                                    <input style="width: 100px" class="text-input" type="text" id="description"
                                            name="description" value="${meal.description}">
                                 </label>
                             </fieldset>
@@ -92,8 +92,8 @@
                                     ${meal.calories}
                             </div>
                             <fieldset style="display: none" name="togglefield${id}">
-                                <label for="calories">Calories
-                                    <input style="width: 170px" class="text-input" type="number" id="calories"
+                                <label for="calories">
+                                    <input style="width: 70px" class="text-input" type="number" id="calories"
                                            name="calories" value="${meal.calories}">
                                 </label>
                             </fieldset>

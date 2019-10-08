@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class MealServlet extends HttpServlet {
             log.debug("redirect to meals");
             resp.sendRedirect("meals");
         } else {
-            List<MealTo> mealToList = MealsUtil.createListOfMealTo(mealDaoInMemory.findAll(), MealsUtil.DEFAULT_CALORIES_PER_DAY);
+            List<MealTo> mealToList = MealsUtil.getFiltered(mealDaoInMemory.findAll(), LocalTime.MIN, LocalTime.MAX, MealsUtil.DEFAULT_CALORIES_PER_DAY);
             req.setAttribute("mealsFromDataBase", mealToList);
             req.setAttribute("formatter", formatter);
             log.debug("forward to meals");
@@ -51,30 +52,30 @@ public class MealServlet extends HttpServlet {
         String requestParam = req.getParameter("action");
         log.debug("Request passed first parameter: " + requestParam);
         Meal meal = parseRequest(req);
-        switch (requestParam) {
-            case "edit":
-                try {
-                    Integer id = Integer.parseInt(req.getParameter("value"));
-                    if (meal != null) {
+        if (meal != null) {
+            switch (requestParam) {
+                case "edit":
+                    try {
+                        Integer id = Integer.parseInt(req.getParameter("value"));
                         meal.setId(id);
-                        mealDaoInMemory.update(id, meal);
+                        mealDaoInMemory.update(meal);
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
                     }
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-                break;
+                    break;
 
-            case "save":
-                try {
-                    mealDaoInMemory.save(meal);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                }
-                break;
+                case "save":
+                    try {
+                        mealDaoInMemory.save(meal);
+                    } catch (Exception e) {
+                        log.error(e.getMessage());
+                    }
+                    break;
 
-            default:
-                log.debug("no parameters");
-                break;
+                default:
+                    log.debug("no parameters");
+                    break;
+            }
         }
         log.debug("redirect to meals");
         resp.sendRedirect("meals");

@@ -42,18 +42,13 @@ public class MealDaoInMemory implements CrudDao<Meal> {
         if (model.getId() == null) {
             model.setId(counter.incrementAndGet());
         }
-        dataBase.put(model.getId(), model);
-        return model;
+        return dataBase.putIfAbsent(model.getId(), model);
     }
 
     @Override
-    public Meal update(Integer id, Meal model) {
-        if (id > 0 && id <= counter.get()) {
-            model.setId(id);
-            dataBase.computeIfPresent(id, (key, value) -> model);
-            return model;
-        }
-        return null;
+    public Meal update(Meal model) {
+        Integer id = model.getId();
+        return dataBase.computeIfPresent(id, (key, value) -> model);
     }
 
     @Override
