@@ -22,6 +22,7 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
+        "classpath:spring/spring-jdbc.xml",
         "classpath:spring/spring-db.xml"
 })
 @RunWith(SpringRunner.class)
@@ -99,6 +100,14 @@ public class MealServiceTest {
         Meal createMeal = service.create(newMeal, USER_ID);
         newMeal.setId(createMeal.getId());
         assertMatch(service.getAll(USER_ID), USER_MEAL_3, USER_MEAL_2, USER_MEAL_1, newMeal);
+    }
+
+    @Test
+    public void createCheckingReturnResult() throws Exception {
+        Meal newMeal = new Meal(LocalDateTime.MIN, "Dinner", 300);
+        Meal createMeal = service.create(newMeal, USER_ID);
+        newMeal.setId(createMeal.getId());
+        assertMatch(createMeal, newMeal);
     }
 
     @Test(expected = DataAccessException.class)
